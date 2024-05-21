@@ -1,6 +1,5 @@
 import { RequestHandler } from "express";
-import { Employee, Department } from "../model/Employee";
-import { EmployeeList } from "../../EmployeeDB";
+import { Department } from "../model/Employee";
 import { createEmployee, deleteEmployee, getAllEmployee, getEmployee, putEmployee } from "../service/employeeservice";
 
 export const GetAllEmployeeController: RequestHandler = async (req, res, next) => {
@@ -17,14 +16,13 @@ export const GetAllEmployeeController: RequestHandler = async (req, res, next) =
         message: "Server error"
     });
   }
-  //produces application.json
 };
 
 export const getEmployeeController: RequestHandler = async (req,res,next)=>{
     try{
-        const {id} = await req.params;
-        const employeeSearch = getEmployee(+id);
-        if(employeeSearch === undefined){
+        const {id} = req.params;
+        let employeeSearch = await getEmployee(+id);
+        if(employeeSearch === null){
             res.status(404).json({
                 status:"failed",
                 message:"Not Found"
@@ -47,9 +45,8 @@ export const CreateEmployeeController: RequestHandler = async (req,res,next) =>{
     try{
         const {id,name,salary,department} = req.body
         //error 400:
-        if( typeof name !== 'string' ||typeof salary !== 'number' 
-        // || !(department in Department)
-        ){
+        if( typeof name !== 'string' ||typeof salary !== 'number' || !(department in Department))
+        {
             return res.status(400).json({
                 status: "error",
                 message: "Bad request"
@@ -72,25 +69,20 @@ export const CreateEmployeeController: RequestHandler = async (req,res,next) =>{
 
 export const putEmployeeController: RequestHandler = async (req,res,next)=>{
     try{
-        const {id,name,salary,department} = await req.body
-        let prevEmployee = EmployeeList.find(employee =>employee.id === id);
+        const {id,name,salary,department} = req.body
+        let prevEmployee = await getEmployee(+id);
         //error 400:
-        if(prevEmployee === undefined){
+        if(prevEmployee === null){
             return res.status(404).json({
                 status: "error",
                 message: "Not Found"
             })
         }
-        else if(typeof id !== 'number' || typeof name !== 'string' ||typeof salary !== 'number' || !(department in Department)){
-            return res.status(400).json({
-                status: "error",
-                message: "Bad request"
-            })
-        }
-        else if(name === prevEmployee.name && salary == prevEmployee.salary && department == prevEmployee.department){
-            return res.status(304).json({
+        else if(prevEmployee && name === prevEmployee.name && salary === prevEmployee.salary && department === prevEmployee.department){
+            //setting this setting to 304 will NOT give any return values in POSTMAN, but is the right logic.
+            return res.status(404).json({
                 status: "Unchanged",
-                message: "No Change"
+                message: "No changes made"
             })
         }
         putEmployee(id,name,salary,department);
@@ -110,9 +102,9 @@ export const putEmployeeController: RequestHandler = async (req,res,next)=>{
 
 export const deleteEmployeeController: RequestHandler= async (req,res,next)=>{
     try{
-        const {id} = await req.params;
-        const employeeSearch = getEmployee(+id);
-        if(employeeSearch === undefined){
+        const {id} = req.params;
+        const employeeSearch = await getEmployee(+id);
+        if(employeeSearch === null){
             res.status(404).json({
                 status:"failed",
                 message:"Not Found"

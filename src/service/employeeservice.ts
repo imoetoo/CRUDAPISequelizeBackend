@@ -1,5 +1,4 @@
 import {Employee, Department} from '../model/Employee';
-import {EmployeeList} from '../../EmployeeDB';
 import User from '../../models/user'
 
 // const {sequelize, User} =require('../../models');
@@ -10,26 +9,28 @@ export const getAllEmployee = async (): Promise<any[]> =>{
 }
 
 export const getEmployee = async (id:number) : Promise<any|undefined> =>{
-    return await User.findByPk(id); //this is a nested function
+    return await User.findByPk(id);
 }
 
 export const createEmployee = async (id:number, name: string, salary:number , department : Department):Promise<void> => {
     const newEmployee = await User.create({id,name,salary,department});
-    console.log(newEmployee)
 }
 
-export const putEmployee = (id:number, name:string, salary:number,department:Department):void =>{
-    let editEmployee = EmployeeList.find(employee =>employee.id === id);
+export const putEmployee = async (id:number, name:string, salary:number,department:Department):Promise<void> =>{
+    let editEmployee = await User.findByPk(id);
     if (editEmployee){
-        editEmployee.department = department;
-        editEmployee.name = name;
-        editEmployee.salary=salary;
+        editEmployee.set({
+            department : department,
+            name : name,
+            salary: salary,
+        });
+        editEmployee.save();
     }    
 }
 
-export const deleteEmployee = (id:number):void =>{
-    let delEmployeeIndex = EmployeeList.findIndex(employee =>employee.id === id);
-    if(delEmployeeIndex >= 0){
-        EmployeeList.splice(delEmployeeIndex,1);
+export const deleteEmployee = async (id:number):Promise<void> =>{
+    let delEmployee = await User.findByPk(id);
+    if(delEmployee){
+        await delEmployee.destroy();
     }
 }
