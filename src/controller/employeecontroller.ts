@@ -3,9 +3,9 @@ import { Employee, Department } from "../model/Employee";
 import { EmployeeList } from "../../EmployeeDB";
 import { createEmployee, deleteEmployee, getAllEmployee, getEmployee, putEmployee } from "../service/employeeservice";
 
-export const GetAllEmployeeController: RequestHandler = (req, res, next) => {
+export const GetAllEmployeeController: RequestHandler = async (req, res, next) => {
   try {
-    const employees = getAllEmployee();
+    const employees = await getAllEmployee();
     res.status(200).json({
       status: "passed",
       message: "successful operation",
@@ -20,9 +20,9 @@ export const GetAllEmployeeController: RequestHandler = (req, res, next) => {
   //produces application.json
 };
 
-export const getEmployeeController: RequestHandler = (req,res,next)=>{
+export const getEmployeeController: RequestHandler = async (req,res,next)=>{
     try{
-        const {id} = req.params;
+        const {id} = await req.params;
         const employeeSearch = getEmployee(+id);
         if(employeeSearch === undefined){
             res.status(404).json({
@@ -43,17 +43,19 @@ export const getEmployeeController: RequestHandler = (req,res,next)=>{
     }
 }
 
-export const CreateEmployeeController: RequestHandler = (req,res,next) =>{
+export const CreateEmployeeController: RequestHandler = async (req,res,next) =>{
     try{
         const {id,name,salary,department} = req.body
         //error 400:
-        if(typeof id !== 'number' || typeof name !== 'string' ||typeof salary !== 'number' || !(department in Department)){
+        if( typeof name !== 'string' ||typeof salary !== 'number' 
+        // || !(department in Department)
+        ){
             return res.status(400).json({
                 status: "error",
                 message: "Bad request"
             })
         }
-        createEmployee(id,name,salary,department);
+        await createEmployee(id,name,salary,department);
         res.status(200).json({
             status:"passed",
             message: "successful operation"
@@ -68,9 +70,9 @@ export const CreateEmployeeController: RequestHandler = (req,res,next) =>{
     }
 }
 
-export const putEmployeeController: RequestHandler =(req,res,next)=>{
+export const putEmployeeController: RequestHandler = async (req,res,next)=>{
     try{
-        const {id,name,salary,department} = req.body
+        const {id,name,salary,department} = await req.body
         let prevEmployee = EmployeeList.find(employee =>employee.id === id);
         //error 400:
         if(prevEmployee === undefined){
@@ -106,9 +108,9 @@ export const putEmployeeController: RequestHandler =(req,res,next)=>{
     }
 }
 
-export const deleteEmployeeController: RequestHandler=(req,res,next)=>{
+export const deleteEmployeeController: RequestHandler= async (req,res,next)=>{
     try{
-        const {id} = req.params;
+        const {id} = await req.params;
         const employeeSearch = getEmployee(+id);
         if(employeeSearch === undefined){
             res.status(404).json({

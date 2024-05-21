@@ -1,18 +1,21 @@
 import {Employee, Department} from '../model/Employee';
 import {EmployeeList} from '../../EmployeeDB';
+import User from '../../models/user'
 
+// const {sequelize, User} =require('../../models');
+// import {User} from '../../models/user';
 
-export const getAllEmployee = (): Employee[] =>{
-    return EmployeeList;
+export const getAllEmployee = async (): Promise<any[]> =>{
+    return await User.findAll();
 }
 
-export const getEmployee = (id:number) : Employee|undefined =>{
-    return EmployeeList.find(employee => employee.id === id); //this is a nested function
+export const getEmployee = async (id:number) : Promise<any|undefined> =>{
+    return await User.findByPk(id); //this is a nested function
 }
 
-export const createEmployee = (id:number, name: string, salary:number , department : Department):void => {
-    const newEmployee = new Employee(id,name,salary,department);
-    EmployeeList.push(newEmployee);
+export const createEmployee = async (id:number, name: string, salary:number , department : Department):Promise<void> => {
+    const newEmployee = await User.create({id,name,salary,department});
+    console.log(newEmployee)
 }
 
 export const putEmployee = (id:number, name:string, salary:number,department:Department):void =>{
