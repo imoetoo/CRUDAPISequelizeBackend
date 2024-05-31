@@ -20,7 +20,6 @@ export const GetAllEmployeeController: RequestHandler = async (
       data: employees,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       status: "failed",
       message: "Server error",

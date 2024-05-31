@@ -37,3 +37,6 @@ coverage/
 # Miscellaneous
 .DS_Store
 Thumbs.db
+
+#
+config.json
