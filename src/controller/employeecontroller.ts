@@ -56,7 +56,7 @@ export const CreateEmployeeController: RequestHandler = async (
   next
 ) => {
   try {
-    const { id, name, salary, department } = req.body;
+    const { name, salary, department } = req.body;
     //error 400:
     // if (
     //   typeof name !== "string" ||
@@ -68,7 +68,7 @@ export const CreateEmployeeController: RequestHandler = async (
     //     message: "Bad request",
     //   });
     // }
-    await createEmployee(id, name, salary, department);
+    await createEmployee(name, salary, department);
     res.status(200).json({
       status: "passed",
       message: "successful operation",
@@ -83,7 +83,8 @@ export const CreateEmployeeController: RequestHandler = async (
 
 export const putEmployeeController: RequestHandler = async (req, res, next) => {
   try {
-    const { id, name, salary, department } = req.body;
+    const { id } = req.params;
+    const { name, salary, department } = req.body;
     let prevEmployee = await getEmployee(+id);
     //error 400:
     if (prevEmployee === null) {
@@ -103,7 +104,7 @@ export const putEmployeeController: RequestHandler = async (req, res, next) => {
         message: "No changes made",
       });
     }
-    putEmployee(id, name, salary, department);
+    putEmployee(+id, name, salary, department);
     res.status(200).json({
       status: "passed",
       message: "successful operation",

@@ -12,11 +12,14 @@ sequelize init
 */
 import express, {Request, Response, NextFunction} from 'express'; //the first express allows you to create an instance of the express application
 import Routes from './src/router/employeerouter';
+import cors from 'cors';
 
 const PORT = 3000;
 const app = express();
 app.use(express.json());
-
+app.use(cors({
+    origin: 'http://localhost:3001'
+}));
 app.use('/api', Routes);
 
 app.listen(PORT,()=>{

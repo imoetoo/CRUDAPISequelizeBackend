@@ -12,8 +12,12 @@ export const getEmployee = async (id:number) : Promise<any|undefined> =>{
     return await User.findByPk(id);
 }
 
-export const createEmployee = async (id:number, name: string, salary:number , department:string):Promise<void> => {
-    const newEmployee = await User.create({id,name,salary,department});
+// export const createEmployee = async (id:number, name: string, salary:number , department:string):Promise<void> => {
+//     const newEmployee = await User.create({id,name,salary,department});
+// }
+
+export const createEmployee = async (name: string, salary:number , department:string):Promise<void> => {
+    const newEmployee = await User.create({name,salary,department});
 }
 
 export const putEmployee = async (id:number, name:string, salary:number,department:string):Promise<void> =>{
