@@ -13,9 +13,10 @@ type UserAttributes = {
 type UserCreationAttributes = Optional<UserAttributes, 'id'>;
 
 class User extends Model<UserAttributes, UserCreationAttributes> {
-    // name: string;
-    // salary: any;
-    // department: any;
+    public id!: number;
+    public name!: string;
+    public salary!: number;
+    public department!: string;
   /**
    * Helper method for defining associations.
    * This method is not a part of Sequelize lifecycle.

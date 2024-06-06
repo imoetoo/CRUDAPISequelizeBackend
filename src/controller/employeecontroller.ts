@@ -5,6 +5,7 @@ import {
   getAllEmployee,
   getEmployee,
   putEmployee,
+  paginatedGetAllEmployee,
 } from "../service/employeeservice";
 
 export const GetAllEmployeeController: RequestHandler = async (
@@ -57,7 +58,7 @@ export const CreateEmployeeController: RequestHandler = async (
 ) => {
   try {
     const { name, salary, department } = req.body;
-    //error 400:
+    //error 400: handled by middleware
     // if (
     //   typeof name !== "string" ||
     //   typeof salary !== "number" ||
@@ -135,6 +136,37 @@ export const deleteEmployeeController: RequestHandler = async (
     res.status(200).json({
       status: "passed",
       message: "successful deletion",
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "failed",
+      message: "Server error",
+    });
+  }
+};
+
+//To view the 2nd page, use the link http://localhost:3000/api/employees?page=2 The ? represents the query string for req.query
+export const paginatedGetAllEmployeeController: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const { page = 1 } = req.query;
+    const pageItems = 10;
+    const employeeOffset = (+page - 1) * pageItems;
+    //here, rows represents the employees data
+    const { count, rows } = await paginatedGetAllEmployee(
+      pageItems,
+      employeeOffset
+    );
+    res.status(200).json({
+      status: "passed",
+      message: "successful operation",
+      data: rows,
+      totalItems: count,
+      totalPages: Math.ceil(count / pageItems),
+      currentPage: +page,
     });
   } catch (error) {
     res.status(500).json({
